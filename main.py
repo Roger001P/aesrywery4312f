@@ -37,7 +37,7 @@ def get_batch(interact_task_samples, interest_task_samples, i, batch_size):
     batch['interest_task_samples'] = torch.tensor(interest_task_samples, device=device)
     return batch
 
-def early_stopping(log_value, best_value, stopping_step, expected_order='acc', flag_step=100):
+def early_stopping(log_value, best_value, stopping_step, expected_order='acc', flag_step=10):
     # early stopping strategy:
     assert expected_order in ['acc', 'dec']
     if (expected_order == 'acc' and log_value >= best_value) or (expected_order == 'dec' and log_value <= best_value):
@@ -84,6 +84,7 @@ if __name__ == '__main__':
 
     start_epoch = 0
     cur_stopping_step = 0
+    cur_best_pre = 0
     stop_epoch = 0
     should_stop = False
 
@@ -121,15 +122,14 @@ if __name__ == '__main__':
             print(train_res)
 
             cur_pre = eval_ret['auc']
-            cur_best_pre, best_test_auc = 0, 0
             cur_best_pre, cur_stopping_step, should_stop = early_stopping(cur_pre, cur_best_pre, cur_stopping_step, expected_order='acc', flag_step=10)
             stop_epoch = epoch - 10 * test_batch
 
             if cur_stopping_step == 0:
                 print("### Find better!")
-                best_test_auc = test_ret['auc']
+                cur_best_pre = test_ret['auc']
             if should_stop:
-                print('early stopping at %d, eval_AUC:%.4f, test_AUC:%.4f' % (stop_epoch, cur_best_pre, best_test_auc))
+                print('early stopping at %d, eval_AUC:%.4f, test_AUC:%.4f' % (stop_epoch, cur_best_pre, cur_best_pre))
                 break
         print('using time %.4f, training loss at epoch %d: %.4f' % (train_e_t - train_s_t, epoch, all_loss))
 
