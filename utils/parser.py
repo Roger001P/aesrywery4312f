@@ -12,7 +12,7 @@ def parse_args_kgsr():
     parser.add_argument("--inverse_r", type=bool, default=True, help="consider inverse relation or not")
 
     # ===== train ===== #
-    parser.add_argument('--epoch', type=int, default=1000, help='number of epochs')
+    parser.add_argument('--epoch', type=int, default=2000, help='number of epochs')
     parser.add_argument('--batch_size', type=int, default=4096, help='batch size')
     parser.add_argument('--test_batch_size', type=int, default=2048, help='test batch size')
     parser.add_argument('--activate', nargs='?', default="tanh", help='[tanh, sigmoid, relu]')
